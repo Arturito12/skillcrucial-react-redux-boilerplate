@@ -3,6 +3,7 @@ import path from 'path'
 import cors from 'cors'
 import sockjs from 'sockjs'
 import cookieParser from 'cookie-parser'
+import axios from 'axios'
 
 import config from './config'
 import Html from '../client/html'
@@ -30,6 +31,23 @@ server.get('/', (req, res) => {
     <h3>Client hosted at <a href="http://localhost:8087">localhost:8087</a>!</h3>
   `)
 })
+// making http requests requests and building api
+server.get('/api/v1/users/:name', (req, res) => {
+  const { name } = req.params
+  res.json({ name })
+})
+
+server.get('/api/v1/users/', async (req, res) => {
+  const { data: users } = await axios('https://jsonplaceholder.typicode.com/users')
+  res.json(users)
+})
+
+server.get('/api/v1/users/take/:number', async (req, res) => {
+  const { number } = req.params
+  const { data: users } = await axios('https://jsonplaceholder.typicode.com/users')
+  res.json(users.slice(0, +number))
+})
+//end of practice
 
 server.get('/*', (req, res) => {
   const initialState = {
